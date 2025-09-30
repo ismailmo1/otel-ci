@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -25,5 +25,15 @@ jobs:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v6
 
-      - name: run tests
+      - name: test
         run: uv run pytest
+
+      - name: upload test traces
+        uses: inception-health/otel-upload-test-artifact-action@v1
+        if: always()
+        with:
+          jobName: "build-and-test"
+          stepName: "test"
+          path: "junit.xml"
+          type: "junit"
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
