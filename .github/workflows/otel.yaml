@@ -1,0 +1,21 @@
+name: OpenTelemetry Export Trace
+
+on:
+  workflow_run:
+    workflows: [build-and-test]
+    types: [completed]
+
+jobs:
+  otel-export-trace:
+    name: OpenTelemetry Export Trace
+    runs-on: ubuntu-latest
+    env:
+      HONEYCOMB_CI_DATASET: gha-ci-workflow
+    steps:
+      - name: Export Workflow Trace
+        uses: inception-health/otel-export-trace-action@latest
+        with:
+          otlpEndpoint: grpc://api.honeycomb.io:443/
+          otlpHeaders: x-honeycomb-team=${{ secrets.HONEYCOMB_API_KEY }},x-honeycomb-dataset=${{ env.HONEYCOMB_CI_DATASET }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          runId: ${{ github.event.workflow_run.id }}
