@@ -26,7 +26,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: test
-        run: uv run pytest
+        run: uv run pytest --junitxml=junit.xml
 
       - name: upload test traces
         uses: ismailmo1/otel-upload-test-artifact-action@latest
